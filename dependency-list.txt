@@ -1,0 +1,16 @@
+
+The following files have been resolved:
+   org.seleniumhq.selenium:selenium-java:jar:4.41.0:compile[36m -- module org.seleniumhq.selenium.java[m
+   io.github.bonigarcia:webdrivermanager:jar:6.3.3:compile[36m -- module io.github.bonigarcia.webdrivermanager[0;1m [auto][m
+   org.testng:testng:jar:7.12.0:test[36m -- module org.testng[0;1m [auto][m
+   io.cucumber:cucumber-java:jar:7.34.3:compile[36m -- module io.cucumber.java[0;1m [auto][m
+   io.cucumber:cucumber-testng:jar:7.34.3:compile[36m -- module io.cucumber.testng[0;1m [auto][m
+   io.cucumber:cucumber-core:jar:7.34.3:compile[36m -- module io.cucumber.core[0;1m [auto][m
+   io.cucumber:cucumber-expressions:jar:19.0.0:compile[36m -- module io.cucumber.cucumberexpressions[m
+   io.cucumber:cucumber-picocontainer:jar:7.34.3:compile[36m -- module io.cucumber.picocontainer[0;1m [auto][m
+   org.assertj:assertj-core:jar:4.0.0-M1:test[36m -- module org.assertj.core[m
+   org.apache.logging.log4j:log4j-core:jar:2.25.3:compile[36m -- module org.apache.logging.log4j.core[m
+   org.apache.logging.log4j:log4j-api:jar:2.25.3:compile[36m -- module org.apache.logging.log4j[m
+   org.slf4j:slf4j-api:jar:2.0.17:compile[36m -- module org.slf4j[m
+   org.apache.logging.log4j:log4j-slf4j2-impl:jar:2.25.3:compile[36m -- module org.apache.logging.log4j.slf4j2.impl[m
+

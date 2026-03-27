@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="LinkedInJobs Suite">
+  <test name="AllTests">
+    <groups>
+      <run>
+        <include name="*"/>
+      </run>
+    </groups>
+    <packages>
+      <package name="com.linkedinjobs.runner" />
+      <package name="com.linkedinjobs.stepdefinitions" />
+    </packages>
+  </test>
+</suite>
