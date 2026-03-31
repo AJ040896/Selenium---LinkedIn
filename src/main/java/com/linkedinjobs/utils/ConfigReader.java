@@ -1,94 +1,125 @@
 package com.linkedinjobs.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class ConfigReader {
 
-    private static final Properties props = new Properties();
     private static final Logger log = LoggerFactory.getLogger(ConfigReader.class);
+    private static final Dotenv dotenv;
 
     static {
-        try (InputStream in = ConfigReader.class
-                .getClassLoader()
-                .getResourceAsStream("config.properties")) {
-
-            if (in == null) {
-                throw new RuntimeException(
-                    "config.properties not found in src/main/resources"
-                );
-            }
-            props.load(in);
-            log.info("config.properties loaded successfully");
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load config.properties", e);
-        }
+        // Load .env file from project root
+        // ignoreIfMissing() — no crash in CI where env vars
+        // are injected directly without a .env file
+        dotenv = Dotenv.configure()
+                .ignoreIfMissing()
+                .filename(".env")
+                .load();
+        log.info("ConfigReader initialised");
     }
 
     private ConfigReader() {}
 
-    // ── Browser ────────────────────────────────────────────────────
-    // System property (-Dbrowser=firefox) takes priority over config file
-    // Allows CI pipelines to override without changing any code
+    // ══════════════════════════════════════════════════════════════
+    // CORE RESOLVER
+    // ══════════════════════════════════════════════════════════════
+
+    // Priority chain (highest to lowest):
+    // 1. System property  — -Dkey=value from CLI (mvn test -DBROWSER=firefox)
+    // 2. .env file        — local developer machine
+    // 3. System env var   — CI/CD injected secrets (GitHub Actions, Jenkins)
+    // 4. Hardcoded default — last resort, non-sensitive values only
+    private static String resolve(String key, String defaultValue) {
+
+        // 1. System property (-D flag) — highest priority
+        // key.toLowerCase() because -D flags use lowercase by convention
+        String sysProp = System.getProperty(key.toLowerCase());
+        if (isSet(sysProp)) {
+            log.debug("'{}' resolved from system property (-D flag)", key);
+            return sysProp.trim();
+        }
+
+        // 2. .env file
+        String dotenvVal = dotenv.get(key, null);
+        if (isSet(dotenvVal)) {
+            log.debug("'{}' resolved from .env file", key);
+            return dotenvVal.trim();
+        }
+
+        // 3. System environment variable (CI/CD)
+        String envVar = System.getenv(key);
+        if (isSet(envVar)) {
+            log.debug("'{}' resolved from environment variable", key);
+            return envVar.trim();
+        }
+
+        // 4. Hardcoded default
+        log.debug("'{}' not found anywhere — using default: {}", key, defaultValue);
+        return defaultValue;
+    }
+
+    private static boolean isSet(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // BROWSER
+    // ══════════════════════════════════════════════════════════════
+
     public static String getBrowser() {
-        String sysProp = System.getProperty("browser");
-        return (sysProp != null && !sysProp.trim().isEmpty())
-                ? sysProp.trim()
-                : props.getProperty("browser", "chrome");
+        return resolve("BROWSER", "chrome");
     }
 
-    // ── URLs ───────────────────────────────────────────────────────
+    public static boolean isHeadless() {
+        return Boolean.parseBoolean(resolve("HEADLESS", "false"));
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // APPLICATION
+    // ══════════════════════════════════════════════════════════════
+
     public static String getBaseUrl() {
-        String sysProp = System.getProperty("base.url");
-        return (sysProp != null && !sysProp.trim().isEmpty())
-                ? sysProp.trim()
-                : props.getProperty("base.url");
+        return resolve("BASE_URL", "https://www.linkedin.com");
     }
 
-    // ── Timeouts ───────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════
+    // TIMEOUTS
+    // ══════════════════════════════════════════════════════════════
+
     public static int getExplicitWait() {
-        return Integer.parseInt(
-            props.getProperty("explicit.wait", "10")
-        );
+        return Integer.parseInt(resolve("EXPLICIT_WAIT", "10"));
     }
 
     public static int getPageLoadTimeout() {
-        return Integer.parseInt(
-            props.getProperty("page.load.timeout", "30")
-        );
+        return Integer.parseInt(resolve("PAGE_LOAD_TIMEOUT", "30"));
     }
 
-    // ── Headless flag ──────────────────────────────────────────────
-    public static boolean isHeadless() {
-        String sysProp = System.getProperty("headless");
-        if (sysProp != null) return Boolean.parseBoolean(sysProp);
-        return Boolean.parseBoolean(props.getProperty("headless", "false"));
-    }
+    // ══════════════════════════════════════════════════════════════
+    // CREDENTIALS
+    // ══════════════════════════════════════════════════════════════
 
-    // ── Test data credentials ──────────────────────────────────────
     public static String getAdminUsername() {
-        return props.getProperty("admin.username");
+        String username = resolve("LINKEDIN_USERNAME", "");
+        if (!isSet(username)) {
+            throw new RuntimeException(
+                "LinkedIn username not configured.\n" +
+                "Add LINKEDIN_USERNAME to your .env file."
+            );
+        }
+        return username;
     }
 
     public static String getAdminPassword() {
-        return props.getProperty("admin.password");
-    }
-
-    // ── Generic getter — for any custom property ───────────────────
-    public static String getProperty(String key) {
-        String value = props.getProperty(key);
-        if (value == null) {
-            log.warn("Property '{}' not found in config.properties", key);
+        String password = resolve("LINKEDIN_PASSWORD", "");
+        if (!isSet(password)) {
+            throw new RuntimeException(
+                "LinkedIn password not configured.\n" +
+                "Add LINKEDIN_PASSWORD to your .env file."
+            );
         }
-        return value;
-    }
-
-    public static String getProperty(String key, String defaultValue) {
-        return props.getProperty(key, defaultValue);
+        return password;
     }
 }

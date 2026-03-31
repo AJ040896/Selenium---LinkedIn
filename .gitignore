@@ -1,9 +1,14 @@
 # ── Maven build output ─────────────────────────────────────
 target/
 
+# ── Credentials — NEVER commit these ──────────────────────
+.env
+
 # ── IDE files ──────────────────────────────────────────────
 .idea/
 *.iml
+*.iws
+*.ipr
 .eclipse/
 .settings/
 .classpath
@@ -19,8 +24,8 @@ reports/
 # ── OS files ───────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# ── Credentials — NEVER commit these ──────────────────────
-# config.properties contains LinkedIn username + password
-# We commit a template instead (see Step 5)
-src/main/resources/config.properties
+# ── Test output ────────────────────────────────────────────
+screenshots/
+test-output/

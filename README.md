@@ -1,58 +1,38 @@
-# LinkedIn Automation Framework
+## Quick Start
 
-Selenium Java + TestNG + Cucumber BDD framework for LinkedIn job search automation.
+### 1. Clone
 
-## Tech Stack
-- Java 11
-- Selenium WebDriver 4.x
-- TestNG 7.x
-- Cucumber 7.x
-- PicoContainer (DI)
-- Maven
-- SLF4J + Log4j2
-
-## Setup
-
-1. Clone the repo
-```
-   git clone https://github.com/your-username/linkedin-automation-framework.git
+```bash
+git clone https://github.com/AJ040896/Selenium---LinkedIn.git
+cd Selenium---LinkedIn
 ```
 
-2. Copy the config template and fill in your credentials
-```
-   cp src/main/resources/config.properties.template src/main/resources/config.properties
+### 2. Run setup script (once)
+
+```bash
+bash setup.sh
 ```
 
-3. Edit `config.properties` with your LinkedIn credentials
+### 3. Fill in your credentials
 
-4. Run all tests
-```
-   mvn test
-```
-
-5. Run specific tags
-```
-   mvn test -Dcucumber.filter.tags="@smoke"
-   mvn test -Dbrowser=chrome-headless
+```bash
+nano .env
 ```
 
-## Project Structure
 ```
-src/main/java/com/linkedinjobs/
-├── pages/          # Page Object classes
-├── utils/          # DriverFactory, ConfigReader, WaitUtils, ReportUtils
-└── model/          # POJOs (JobListing)
-
-src/test/java/com/linkedinjobs/
-├── stepdefinitions/ # Cucumber step definitions + Hooks
-└── runner/          # TestRunner
-
-src/test/resources/
-├── features/        # Gherkin feature files
-└── testdata/        # Test data JSON files
+LINKEDIN_USERNAME=your-email@example.com
+LINKEDIN_PASSWORD=your-password
 ```
 
-## Reports
-After a test run, reports are generated in:
-- `target/cucumber-reports/report.html` — Cucumber HTML report
-- `target/reports/` — Extracted job listings (JSON + CSV)
+### 4. Run tests
+
+```bash
+mvn test
+```
+
+## Credential resolution order
+
+1. `-D` CLI flag — `mvn test -DBROWSER=firefox`
+2. `.env` file — local development
+3. System environment variable — CI/CD pipelines
+4. Hardcoded default — non-sensitive fallback only
