@@ -28,27 +28,32 @@ public class LoginPage extends BasePage{
         log.info("LoginPage initialized");
     }
 
-    public void clickNavSignIn() {
+    public LoginPage clickNavSignIn() {
         click(navSignInButton);
+        return this;
     }
 
-    public void enterEmail(String email) {
+    public LoginPage enterEmail(String email) {
         type(emailField, email);
+        return this;
     }
 
-    public void enterPassword(String password) {
+    public LoginPage enterPassword(String password) {
         type(passwordField, password);
+        return this;
     }
 
-    public void clickSignIn() {
+    public LoginPage clickSignIn() {
         click(signInButton);
+        return this;
     }
 
-    public void loginIntoLinkedIn(String email, String password){
+    public LoginPage loginIntoLinkedIn(String email, String password){
         log.info("Logging in with email: {}", email);
         clickNavSignIn();
         enterEmail(email);
         enterPassword(password);
         clickSignIn();
+        return this;
     }
 }
