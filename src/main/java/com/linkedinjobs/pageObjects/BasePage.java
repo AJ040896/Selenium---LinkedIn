@@ -175,11 +175,6 @@ public class BasePage {
         return waitUtils.waitForVisible(locator).getText().trim();
     }
 
-    protected String getText(WebElement element) {
-        log.debug("Getting text from WebElement");
-        return waitUtils.waitForVisible(element).getText().trim();
-    }
-
     // Gets an attribute value (href, value, class, data-* etc.)
     protected String getAttribute(By locator, String attribute) {
         log.debug("Getting attribute '{}' from: {}", attribute, locator);
